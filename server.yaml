@@ -1,0 +1,47 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Include variables from config file
+      include_vars: config.yaml
+
+    - name: Create udp2raw directory if it does not exist
+      ansible.builtin.file:
+        path: "{{ udp2raw_directory }}"
+        state: directory
+        mode: 0750
+        owner: root
+        group: root
+
+    - name: Download tar.gz file
+      get_url:
+        url: "https://github.com/wangyu-/udp2raw/releases/download/20230206.0/udp2raw_binaries.tar.gz"
+        dest: "{{ udp2raw_directory }}"
+        mode: 0640
+
+    - name: Extract udp2raw_binaries.tar.gz file
+      unarchive:
+        src: "{{ udp2raw_directory }}/udp2raw_binaries.tar.gz"
+        dest: "{{ udp2raw_directory }}"
+        remote_src: yes
+
+    - name: Add systemd unit file template
+      template:
+        src: udp2raw-server.service.j2
+        dest: "/etc/systemd/system/{{ udp2raw_server_systemd_file_name }}.service"
+        mode: 0644
+        owner: root
+        group: root
+
+    - name: Reload systemd daemon
+      systemd:
+        name: "{{ udp2raw_server_systemd_file_name }}"
+        daemon_reload: true
+        enabled: true
+        state: started
+
+  vars:
+    udp2raw_file: "udp2raw_amd64"
+    udp2raw_server_service_description: "udp2raw service"
+    udp2raw_directory: "/root/udp2raw"

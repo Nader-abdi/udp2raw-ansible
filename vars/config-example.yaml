@@ -1,0 +1,7 @@
+    udp2raw_client_listen_port: "4444"
+    udp2raw_server_ip: "1.2.3.4"
+    udp2raw_server_listen_port: "5412"
+    udp2raw_server_service_listen_port: "1234"
+    udp2raw_encryption_key: "key"
+    udp2raw_client_systemd_file_name: "udp2raw-client"
+    udp2raw_server_systemd_file_name: "udp2raw-client"

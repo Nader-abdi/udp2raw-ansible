@@ -1,0 +1,16 @@
+[Unit]
+Description={{ udp2raw_client_service_description }}
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/home/ubuntu
+Restart=always
+RestartSec=1
+ExecStart={{ udp2raw_directory }}/{{ udp2raw_file }} -c -l0.0.0.0:{{ udp2raw_client_listen_port }} -r{{ udp2raw_server_ip }}:{{ udp2raw_server_listen_port }} -k "{{ udp2raw_encryption_key }}" --raw-mode icmp -a
+
+[Install]
+WantedBy=multi-user.target
