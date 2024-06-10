@@ -1,3 +1,6 @@
-all:
+clients:
   hosts:
-    #1.2.3.4
+    user@host
+servers:
+  hosts:
+    user@host
