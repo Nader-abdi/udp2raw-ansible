@@ -41,6 +41,36 @@
         enabled: true
         state: started
 
+    - name: Update repositories
+      apt:
+        update_cache: yes
+
+    - name: Install docker and docker-compose
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - docker.io
+        - docker-compose
+     
+    - name: Download openvpn git repository
+      git:
+        repo: "https://github.com/Nader-abdi/dockovpn.git"
+        dest: "/root/dockovpn"
+
+    - name: Run docker-compose
+      command: "docker-compose up -d"
+      args:
+        chdir: "/root/dockovpn"
+
+    - name : Generate openvpn client configuration
+      ansible.builtin.shell: "docker exec dockovpn_dockovpn_1 ./genclient.sh o > /root/dockovpn/client.ovpn"
+
+    - name : Download openvpn client configuration
+      fetch:
+        src: "/root/dockovpn/client.ovpn"
+        dest: "./data"  
+
   vars:
     udp2raw_file: "udp2raw_amd64"
     udp2raw_server_service_description: "udp2raw service"
